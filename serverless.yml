@@ -1,0 +1,158 @@
+service: proveedores-api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+
+functions:
+  crearProveedor:
+    handler: HU-F-01.crearProveedor
+    environment:
+      PROVEEDORES_TABLE_NAME: !Ref proveedoresTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: !GetAtt proveedoresTable.Arn
+    events:
+      - http:
+          path: proveedores
+          method: post
+  actualizarProveedor:
+    handler: HU-F-01.actualizarProveedor
+    environment:
+      PROVEEDORES_TABLE_NAME: !Ref proveedoresTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:updateItem
+        Resource: !GetAtt proveedoresTable.Arn 
+    events:
+      - http:
+          path: proveedores/{id}
+          method: put
+
+  eliminarProveedor:
+    handler: HU-F-01.eliminarProveedor
+    environment:
+      PROVEEDORES_TABLE_NAME: !Ref proveedoresTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:deleteItem
+        Resource: !GetAtt proveedoresTable.Arn
+    events:
+      - http:
+          path: proveedores/{id}
+          method: delete
+
+  mostrarProveedores:
+    handler: HU-F-01.mostrarProveedores
+    environment:
+      PROVEEDORES_TABLE_NAME: !Ref proveedoresTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:scan
+        Resource: !GetAtt proveedoresTable.Arn
+    events:
+      - http:
+          path: proveedores
+          method: get
+  
+  crearUsuario:
+    handler: HU-F-04.crearUsuario
+    environment:
+      USUARIOS_TABLE_NAME: !Ref usuariosTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: !GetAtt usuariosTable.Arn
+    events:
+      - http:
+          path: usuarios
+          method: post
+
+  actualizarUsuario:
+    handler: HU-F-04.actualizarUsuario
+    environment:
+      USUARIOS_TABLE_NAME: !Ref usuariosTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:updateItem
+        Resource: !GetAtt usuariosTable.Arn 
+    events:
+      - http:
+          path: usuarios/{id}
+          method: put
+
+  eliminarUsuario:
+    handler: HU-F-04.eliminarUsuario
+    environment:
+      USUARIOS_TABLE_NAME: !Ref usuariosTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:deleteItem
+        Resource: !GetAtt usuariosTable.Arn
+    events:
+      - http:
+          path: usuarios/{id}
+          method: delete
+
+  mostrarUsuarios:
+    handler: HU-F-04.mostrarUsuarios
+    environment:
+      USUARIOS_TABLE_NAME: !Ref usuariosTable
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:scan
+        Resource: !GetAtt usuariosTable.Arn
+    events:
+      - http:
+          path: usuarios
+          method: get
+
+plugins:
+  - serverless-iam-roles-per-function
+  
+# You can add CloudFormation resource templates here
+resources:
+  Resources:
+    proveedoresTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: proveedores
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: proveedoresId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: proveedoresId
+            KeyType: HASH
+    
+    usuariosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usuarios
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: cedula
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cedula
+            KeyType: HASH

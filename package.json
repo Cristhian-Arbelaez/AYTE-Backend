@@ -1,0 +1,16 @@
+{
+  "name": "proveedores",
+  "version": "1.0.0",
+  "description": "",
+  "main": "HU-F-01.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1467.0",
+    "serverless-iam-roles-per-function": "^3.2.0"
+  }
+}
